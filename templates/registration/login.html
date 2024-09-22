@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/litera/bootstrap.min.css"
+    integrity="sha512-TUtnNUXMMWp2IALAR9t2z1vuorOUQL4dPWG3J9ANInEj6xu/rz5fzni/faoEGzuqeY1Z1yGD6COYAW72oiDVYA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <title>Login | Pyfolio</title>
+</head>
+
+<body>
+  <section>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Left Section: Login Form -->
+        <section class="col-md-6 bg-light d-flex align-items-center justify-content-center"
+          style="margin: 0%; padding: 0%;">
+          <div class="container" style="margin-bottom:75px;">
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <img src="{% static 'images/logo-dark.png' %}" alt="Logo" height="100px">
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div class="col-md-6 mt-5 justify-content-center"
+                style="background-color: white; padding: 50px; box-shadow: 0px 0px 25px; border-radius: 7px;">
+                {% if form.errors%}
+                <!-- Toast alineado a la parte superior derecha -->
+                <div class="toast-container position-fixed bottom-0 end-0 p-3"> <!-- Clase para posicionamiento -->
+                  <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive"
+                    aria-atomic="true">
+                    <div class="d-flex">
+                      <div class="toast-body">
+                        <strong>Usuario o contraseña inválidos.</strong>
+                        <br>Ingrese nuevamente las credenciales.
+                      </div>
+                      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                <form action="{% url 'login' %}" method="post" class="col-md">
+                  <h4 class="text-center mb-2">Iniciar Sesión</h4>
+                  <div class="row justify-content-center mt-2" style="text-align: center;">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="container-fluid">
+                      <div class="form-group mt-4">
+                        <label for="username">{{ field.label_tag }}</label>
+                      </div>
+                      <div class="form-group mt-2">
+                        {{ field }}
+                      </div>
+                    </div>
+                    {% endfor %}
+                    <div class="text-center mt-4">
+                      <button type="submit" class="btn btn-dark btn-block mt-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                          class="bi bi-box-arrow-in-right flex-shrink-0 me-2" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd"
+                            d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z" />
+                          <path fill-rule="evenodd"
+                            d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                        </svg>
+                        Ingresar
+                      </button>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Section: Full Image -->
+        <section class="col-md-6 image-section d-flex align-items-center justify-content-center"
+          style="margin: 0%; padding: 0%;">
+          <img src="{% static 'images/bg-login.jpg' %}" class="img-fluid">
+        </section>
+
+      </div>
+    </div>
+  </section>
+</body>
+<script>
+  $(document).ready(function () {
+    $('.toast').toast('show');
+  });
+</script>
+
+{% endblock %}

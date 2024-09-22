@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/litera/bootstrap.min.css" integrity="sha512-TUtnNUXMMWp2IALAR9t2z1vuorOUQL4dPWG3J9ANInEj6xu/rz5fzni/faoEGzuqeY1Z1yGD6COYAW72oiDVYA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Pyfolio</title>
+</head>
+<body style="overflow: hidden">
+    {% if messages %}
+    {% for message in messages %}
+    <!-- Toast alineado a la parte superior derecha -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-white bg-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {% if message.tags == "success" %}
+                    <strong>Éxito</strong>
+                    {% elif message.tags == "error" %}
+                    <strong>Error</strong>
+                    {% elif message.tags == "danger" %}
+                    <strong>Error</strong>
+                    {% else %}
+                    <strong>{{ message.tags|title }}</strong>
+                    {% endif %}
+                    <br>{{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">        
+                <h5 class="text-center">PORTAFOLIO</h5> 
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row" style="margin-bottom: 10px;" >
+            <form method="post" id="form_search" action="{% url 'analisis'%}" style="margin:10px; max-width: 1100px; margin: auto;">
+                {% csrf_token %}
+                <div class="row align-items-center">
+                    <div class="col-md-8 mb-2">
+                        <div class="d-flex align-items-center">
+                            <h6>Criterio: </h6>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="btn-check" name="analysis_type" value="Equitativo" id="eq" autocomplete="off" checked {% if request.session.analysis_type == 'Equitativo' or not request.session.analysis_type %} checked {% endif %}>
+                                <label class="btn btn-outline-dark" for="eq" style="margin: 5px; width: auto; " >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 18 18">
+                                        <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
+                                    </svg>
+                                    Equitativo
+                                </label>
+    
+                                <input type="radio" class="btn-check" name="analysis_type" value="Mayor" id="mayor" autocomplete="off" {% if request.session.analysis_type == 'Mayor' or not request.session.analysis_type %} checked {% endif %}>
+                                <label class="btn btn-outline-dark" for="mayor" style="margin: 5px; width: auto; ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 18 18">
+                                        <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/>
+                                    </svg>
+                                    Máximo Retorno
+                                </label>
+    
+                                <input type="radio" class="btn-check" name="analysis_type" value="Menor" id="menor" autocomplete="off" {% if request.session.analysis_type == 'Menor' or not request.session.analysis_type %} checked {% endif %}>
+                                <label class="btn btn-outline-dark" for="menor" style="margin: 5px; width: auto; ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-graph-down-arrow" viewBox="0 0 18 18">
+                                        <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 11.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-1 0v2.6l-3.613-4.417a.5.5 0 0 0-.74-.037L7.06 8.233 3.404 3.206a.5.5 0 0 0-.808.588l4 5.5a.5.5 0 0 0 .758.06l2.609-2.61L13.445 11H10.5a.5.5 0 0 0-.5.5"/>
+                                    </svg>
+                                    Mínimo Riesgo
+                                </label>
+
+                                <input type="radio" class="btn-check" name="analysis_type" value="Otro" id="otro" autocomplete="off" {% if request.session.analysis_type == 'Otro' or not request.session.analysis_type %} checked {% endif %}>
+                                <label class="btn btn-outline-dark" for="otro" style="margin: 5px; width: auto; ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                                    </svg>
+                                    Otro
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2 text-end">
+                            <button type="submit" class="btn btn-outline-danger btn-block" value="borrar" name="action" style="margin: 5px; width: auto;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 18 18">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                </svg>
+                                Borrar todo
+                            </button>               
+                        <button type="submit" class="btn btn-outline-dark btn-block" id="procesar-btn" value="procesar" name="action" style="margin: 5px; width: auto;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 18 18">
+                                <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
+                            </svg>
+                            Procesar
+                        </button>                        
+                    </div>
+                    
+                    {% if results %}
+                    <div id="custom-weights" style="display: none; margin-top: 15px; align-items: center;">
+                        <h6 style="margin-bottom: 25px;">Personalizar Ponderaciones:</h6>
+                        <div class="container">
+                            <div class="row">
+                                {% for result in results %}
+                                <div class="col-md-3">
+                                    <div class="input-group input-group-sm mb-3">
+                                        <span class="input-group-text"
+                                            style="height: 45px; width: 90px; display: grid; place-items: center;">{{ result.symbol}}:</span>
+                                        <input type="number" id="weights_{{ symbol }}" step="0.01" min="0.00" max="100"
+                                            class="form-control weight-input" name="weights_{{ result.symbol }}" placeholder="0.00"
+                                            value="0.00" style="text-align: center;">
+                                        <span class="input-group-text"
+                                            style="height: 45px; width: 50px; display: grid; place-items: center">%</span>
+                                    </div>
+                                </div>
+                                {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                            </div>
+                            <div class="row">
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </form>
+
+            {% if results %}
+            <div id="results-div" class="row justify-content-center" style="margin-bottom: 20px;">
+                <div class="col">
+                    <!-- Tabla de resultados -->
+                    <table id="result-table" class="table table-sm table-responsive-sm table-hover table align-middle"
+                        style="margin: 10px auto; max-width: 1000px; border-radius: 10px; margin-bottom: 75px;">
+                        <thead class="table-dark" style="height: 50px; vertical-align: middle;">
+                            <tr>
+                                <th style="text-align: center; border-top-left-radius: 10px;">Símbolo</th>
+                                <th style="text-align: center;">Nombre</th>
+                                <th style="text-align: center;">Precio</th>
+                                <th style="text-align: center;">Moneda</th>
+                                <th style="text-align: center; border-top-right-radius: 10px;">Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td style="text-align: center;">{{ result.symbol }}</td>
+                                <td style="text-align: center;">{{ result.name }}</td>
+                                <td style="text-align: center;">{{ result.last_price }}</td>
+                                <td style="text-align: center;">{{ result.currency }}</td>
+                                <td style="text-align: center;">
+                                    <form method="post" action="{% url 'eliminar_fila' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="symbol" value="{{ result.symbol }}">
+                                        <button type="submit" class="btn"
+                                            style="width: 35px; height: 35px; padding: 0;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                                fill="#e74c3c" class="bi bi-dash-square-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm2.5 7.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const customWeightsDiv = document.getElementById('custom-weights');
+        const analysisType = customWeightsDiv.getAttribute('data-analysis-type');
+        const inputs = document.querySelectorAll('#custom-weights input');
+
+        if (analysisType === 'Otro') {
+            customWeightsDiv.style.display = 'block';
+        }
+
+        const active = document.querySelector('input[name="analysis_type"]:checked').value;
+        if (active === 'Otro') {
+            customWeightsDiv.style.display = 'block';
+        } else {
+            customWeightsDiv.style.display = 'none';
+        }
+
+        const radioButtons = document.querySelectorAll('input[name="analysis_type"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value === 'Otro') {
+                    customWeightsDiv.style.display = 'block';
+                } else {
+                    customWeightsDiv.style.display = 'none';
+                }
+            });
+        });
+
+        inputs.forEach(input => {
+            input.addEventListener('input', validateInputs);
+        });
+
+        function validateInputs() {
+            let total = 0;
+            let allValid = true;
+
+            inputs.forEach(input => {
+                const value = parseFloat(input.value);
+
+                if (isNaN(value) || value < 0 || value > 100 || (total + value > 100 && value > 0)) {
+                    allValid = false;
+                    input.classList.add('is-invalid');
+
+                    if (isNaN(value) || value < 0 || value > 100) {
+                        showToast('danger', 'Las ponderaciones deben estar entre 0% y 100%');
+                    } else if (total + value > 100) {
+                        showToast('danger', 'La suma de todas las ponderaciones debe ser 100%');
+                    }
+                } else {
+                    total += value;
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            return allValid;
+        }
+
+        function showToast(type, message) {
+            // Remove existing toasts
+            document.querySelectorAll('.toast-container').forEach(container => container.remove());
+
+            const toastHTML = `
+                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <strong>${type === 'success' ? 'Éxito' : 'Error'}</strong>
+                                <br>${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', toastHTML);
+            $('.toast').toast('show');
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.toast').toast('show');
+    });
+</script>
+</body>
+
+{% endblock %}

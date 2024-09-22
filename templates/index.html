@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/litera/bootstrap.min.css"
+        integrity="sha512-TUtnNUXMMWp2IALAR9t2z1vuorOUQL4dPWG3J9ANInEj6xu/rz5fzni/faoEGzuqeY1Z1yGD6COYAW72oiDVYA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Pyfolio</title>
+</head>
+
+<body style="overflow: hidden;">
+    <section class="text-center" id="inicio"
+        style="background-color: black; background-size: cover; padding: 15% 0; color: #fff;">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-10">
+                    <h2 class="display-5"><strong>Bienvenido a</strong> <img src="{% static 'images/logo.png' %}"
+                            alt="Logo" height="60vw"></h2>
+                    <blockquote class="blockquote">
+                        <p class="lead" style="color: #fff;">Nuestra plataforma te brinda las herramientas y recursos
+                            necesarios para optimizar tus estrategias de inversión y maximizar tus rendimientos
+                            financieros, a través la creación de portafolios óptimos utilizando modelos de riesgo y
+                            rendimiento con Python.</p>
+                    </blockquote>
+                    {% if not user.is_authenticated %}
+                    <br>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg" style="width: 150px;">Iniciar</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="text-center" id="portfolio"
+        style="background-color:#f7f7f7; background-size: cover; padding: 7% 0; color: black;">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-10">
+                    <img src="{% static 'images/image-1.jpg' %}" class="img-fluid"
+                        style="width: 25vw; height: 25vw; max-width: 250px; max-height: 250px; border-radius: 50%; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);">
+                    <h3 style="margin: 50px; text-align: center; color: black;" class="display-5"><strong>¿Qué es un
+                            Portafolio de Inversiones?</strong></h3>
+                    <blockquote class="blockquote">
+                        <p class="lead" style="color: black; font-size: larger;">Un portafolio de inversiones es la
+                            propiedad de un inversor que consiste en diversos activos financieros, como bonos, acciones,
+                            divisas, efectivo y materias primas, utilizado para obtener ganancias y preservar el
+                            capital.</p>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="text-center" id="components"
+        style="background-color:#eaeaea; background-size: cover; padding: 6% 0; color: black;">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-12">
+                    <img src="{% static 'images/image-2.jpg' %}" class="img-fluid"
+                        style="width: 25vw; height: 25vw; max-width: 250px; max-height: 250px; border-radius: 50%; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);">
+                    <h3 style="margin: 40px; text-align: center; color: black;" class="display-5"><strong>Componentes de
+                            un Portafolio</strong></h3>
+                    <blockquote class="blockquote">
+                        <p
+                            style="color: black; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                            <strong>Acciones: </strong>Representan la participación en una empresa y son una fuente de
+                            ingresos a través de dividendos y la venta a un precio más alto.</p>
+                    </blockquote>
+                    <blockquote class="blockquote">
+                        <p
+                            style="color: black; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                            <strong>Bonos: </strong>Representan préstamos al emisor (gobierno, empresa, agencia) con una
+                            fecha de vencimiento y ofrecen menos riesgo pero potenciales recompensas más bajas que las
+                            acciones.</p>
+                    </blockquote>
+                    <blockquote class="blockquote">
+                        <p
+                            style="color: black; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                            <strong>Inversiones Alternativas: </strong>Incluyen activos como oro, petróleo y bienes
+                            raíces, cuyo valor puede crecer y multiplicarse, aunque son menos negociadas que acciones y
+                            bonos tradicionales.</p>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="text-center" id="types"
+        style="background-color:#646464; background-size: cover; padding: 6% 0; color: white;">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-md-12">
+                    <img src="{% static 'images/image-3.jpg' %}" class="img-fluid"
+                        style="width: 25vw; height: 25vw; max-width: 250px; max-height: 250px; border-radius: 50%; box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);">
+                    <h3 style="margin: 40px; text-align: center; color: white" class="display-5"><strong>Tipos de
+                            Portafolios</strong></h3>
+                    <blockquote class="blockquote">
+                        <p
+                            style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                            <strong>Portafolio Agresivo: </strong>Busca altos rendimientos mediante inversiones en
+                            empresas en crecimiento con alto potencial, asumiendo riesgos considerables.</p>
+                    </blockquote>
+                    <blockquote class="blockquote">
+                        <p
+                            style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                            <strong>Portafolio Defensivo: </strong>Se enfoca en productos básicos de consumo que son
+                            resistentes a las recesiones, ofreciendo estabilidad incluso en tiempos difíciles.</p>
+                    </blockquote>
+                    <blockquote class="blockquote">
+                        <p
+                            style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+                            <strong>Portafolio Híbrido: </strong>Diversifica entre diferentes clases de activos, como
+                            acciones, bonos, materias primas, bienes raíces y arte. Implica proporciones fijas de
+                            acciones, bonos e inversiones alternativas para reducir el riesgo.</p>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" style="background-color: black; padding: 50px 0; color: #fff; text-align: center;">
+        <h2 style="margin-bottom: 30px;">Contacto</h2>
+        <p>Email: info@pyfolio.com</p>
+        <p>Pyfolio &copy; Copyright 2024</p>
+
+    </section>
+</body>
+{% endblock %}

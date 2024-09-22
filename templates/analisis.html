@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/litera/bootstrap.min.css"
+        integrity="sha512-TUtnNUXMMWp2IALAR9t2z1vuorOUQL4dPWG3J9ANInEj6xu/rz5fzni/faoEGzuqeY1Z1yGD6COYAW72oiDVYA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Pyfolio</title>
+    <style>
+        .first-th {
+            border-top-left-radius: 10px;
+        }
+
+        .last-th {
+            border-top-right-radius: 10px;
+        }
+    </style>
+</head>
+
+<body style="overflow: hidden;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-white bg-{{ message.tags }} border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {% if message.tags == "success" %}
+                    <strong>Éxito</strong>
+                    {% elif message.tags == "error" %}
+                    <strong>Error</strong>
+                    {% elif message.tags == "danger" %}
+                    <strong>Error</strong>
+                    {% else %}
+                    <strong>{{ message.tags|title }}</strong>
+                    {% endif %}
+                    <br>{{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="container mt-4">
+        <div class="row" style="margin-bottom: 10px;">
+            <div class="col">
+                <h5 class="text-center">ANÁLISIS DEL PORTAFOLIO</h5>
+            </div>
+
+            {% if stats %}
+            <!-- Tabla para mostrar los pesos -->
+            <div id="weights-div" class="row" style="margin-bottom: 10px; margin-top: 10px;">
+                <div class="table-responsive">
+                    <table id="weights-table" class="table table-sm table-responsive-sm table-hover table align-middle"
+                        style="margin: 10px auto; max-width: 1300px; border-radius: 10px;">
+                        <thead class="table-dark" style="height: auto; vertical-align: middle;">
+                            <tr>
+                                <th colspan="{{ num_columns }}"
+                                    style="text-align: start; border-color: #fff; background-color: #fff; color: #343a40;">
+                                    <button class="btn " style="width: 30px; height: 30px; padding: 0;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#343a40"
+                                            class="bi bi-filter-square-fill" viewBox="0 0 18 18">
+                                            <path
+                                                d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm.5 5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1 0-1M4 8.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m2 3a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5" />
+                                        </svg>
+                                    </button> Ponderaciones
+                                </th>
+                            </tr>
+                            <tr class="symbol-row" style="height: 40px;">
+                                {% for symbol in symbols %}
+                                <th class="{% if forloop.first %}first-th{% elif forloop.last %}last-th{% endif %}"
+                                    style="text-align: center;">{{ symbol }}</th>
+                                {% endfor %}
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr class="weights-row" style="height: 40px; vertical-align: middle;">
+                                {% for weight in weights %}
+                                <td style="text-align: center;">{{ weight}}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tabla para mostrar la información de Retorno, Varianza y Desviación Estándar del portafolio seleccionado -->
+            <div id="results-div" class="row" style="margin-bottom: 10px; margin-top: 0px;">
+                <div class="table-responsive">
+                    <table id="results-table" class="table table-sm table-responsive-sm table-hover table align-middle"
+                        style="margin: 10px auto; max-width: 1300px; border-radius: 10px;">
+                        <thead class="table-dark" style="height: auto; vertical-align: middle;">
+                            <tr>
+                                <th colspan="4"
+                                    style="text-align: start; border-color: #fff; background-color: #fff; color: #343a40;">
+                                    <button class="btn " style="width: 30px; height: 30px; padding: 0;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#343a40"
+                                            class="bi bi-check-square-fill" viewBox="0 0 18 18">
+                                            <path
+                                                d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm10.03 4.97a.75.75 0 0 1 .011 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.75.75 0 0 1 1.08-.022z" />
+                                        </svg>
+                                    </button> Resultados
+                                </th>
+                            </tr>
+                            <tr class="symbol-row" style="height: 40px;">
+                                <th style="text-align: center; border-top-left-radius: 10px;">PORTAFOLIO</th>
+                                <th style="text-align: center;">RETORNO ESPERADO</th>
+                                <th style="text-align: center;">VARIANZA</th>
+                                <th style="text-align: center;">DESVIACIÓN ESTÁNDAR</th>
+                                <th style="text-align: center; border-top-right-radius: 10px;">RATIO SHARPE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="results-row" style="height: 40px; vertical-align: middle;">
+                                <td style="text-align: center;" id="portfolio-type">{{analysis_type}}</td>
+                                <td style="text-align: center;" id="expected-return">{{retorno_portafolio}}</td>
+                                <td style="text-align: center;" id="variance">{{varianza_portafolio}}</td>
+                                <td style="text-align: center;" id="std-dev">{{desviacion_portafolio}}</td>
+                                <td style="text-align: center;" id="sharpe">{{sharpe_portafolio}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="results-div" class="row" style="margin-bottom: 0px; margin-top: 0px;">
+                <div class="table-responsive">
+                    <table id="result-table" class="table table-sm table-responsive-sm table-hover table align-middle"
+                        style="margin: 10px auto; max-width: 1300px auto; border-radius: 10px;">
+                        <thead class="table-dark" style="height: auto; vertical-align: middle;">
+                            <tr>
+                                <th colspan="{{ num_columns }}"
+                                    style="text-align: start; border-color: #fff; background-color: #fff; color: #343a40;">
+                                    <button id="stats-button" class="btn "
+                                        style="width: 30px; height: 30px; padding: 0;">
+                                        <svg id="stats-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                            fill="#343a40" class="bi bi-plus-square-fill" viewBox="0 0 18 18">
+                                            <path
+                                                d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                                        </svg>
+                                    </button> Estadísticas de Retorno
+                                </th>
+                            </tr>
+                            <tr class="symbol-row" style="height: 40px; display: none;">
+                                <th style="text-align: center; border-top-left-radius: 10px;"></th>
+                                {% for symbol in symbols %}
+                                <th class="{% if forloop.last %}last-th{% endif %}" style="text-align: center;">{{symbol }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in stats %}
+                            <tr class="stats-row" style="height: 40px; vertical-align: middle; display: none;">
+                                <td style="text-align: center;">{{ row.0 }}</td>
+                                {% for value in row.1 %}
+                                <td style="text-align: center;">{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="cov-div" class="row" style="margin-bottom: 0px; ">
+                <div class="table-responsive">
+                    <table id="cov-table" class="table table-sm table-responsive-sm table-hover table align-middle"
+                        style="margin: 10px auto; max-width: 1300px; border-radius: 10px;">
+                        <thead class="table-dark" style="height: auto; vertical-align: middle;">
+                            <tr>
+                                <th colspan="{{ num_columns }}"
+                                    style="text-align: start; border-color: #fff; background-color: #fff; color: #343a40;">
+                                    <button id="cov-button" class="btn " style="width: 30px; height: 30px; padding: 0;">
+                                        <svg id="cov-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                            fill="#343a40" class="bi bi-plus-square-fill" viewBox="0 0 18 18">
+                                            <path
+                                                d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                                        </svg>
+                                    </button> Matriz de Covarianza
+                                </th>
+                            </tr>
+                            <tr class="symbol-row" style="height: 40px; vertical-align: middle; display: none;">
+                                <th style="text-align: center; border-top-left-radius: 10px;"></th>
+                                {% for symbol in symbols %}
+                                <th class="{% if forloop.last %}last-th{% endif %}" style="text-align: center;">{{symbol }}</th>
+                                {% endfor %}
+                            </tr>
+                            <tr style="border-top-right-radius: 10px;"></tr>
+                        </thead>
+                        <tbody>
+                            {% for symbol, row in combined_list %}
+                            <tr class="cov-row" style="height: 40px; vertical-align: middle; display: none;">
+                                <td style="text-align: center;">{{ symbol }}</td>
+                                {% for value in row %}
+                                <td style="text-align: center;">{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Nueva tabla para mostrar la matriz de Markowitz -->
+            <div id="markowitz-div" class="row" style="margin-bottom: 150px; margin-top: 0px;">
+                <div class="table-responsive">
+                    <table id="markowitz-table"
+                        class="table table-sm table-responsive-sm table-hover table align-middle"
+                        style="margin: 10px auto; max-width: 1300px; border-radius: 10px;">
+                        <thead class="table-dark" style="height: auto; vertical-align: middle;">
+                            <tr>
+                                <th colspan="{{ num_columns }}" style="text-align: start; border-color: #fff; background-color: #fff; color: #343a40;">
+                                    <button id="markowitz-button"  class="btn " style="width: 30px; height: 30px; padding: 0;">
+                                        <svg id="markowitz-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#343a40" class="bi bi-plus-square-fill" viewBox="0 0 18 18">
+                                            <path
+                                                d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                                        </svg>
+                                    </button> Matriz de Markowitz
+                                </th>
+                            </tr>
+                            <tr class="markowitz-row" style="height: 40px; vertical-align: middle; display: none;">
+                                <th style="text-align: center; border-top-left-radius: 10px;"></th>
+                                {% for symbol in symbols %}
+                                    <th class="{% if forloop.last %}last-th{% endif %}" style="text-align: center;">{{ symbol }}</th>
+                                {% endfor %}
+                            </tr>
+                            <tr style="border-top-right-radius: 10px;"></tr>
+                        </thead>
+                        <tbody>
+                            {% for symbol, row in markowitz_matrix %}
+                            <tr class="markowitz-row"
+                                style="height: 40px; vertical-align: middle; text-align: center; display: none;">
+                                <td style="text-align: center;">{{ symbol }}</td>
+                                {% for value in row %}
+                                <td style="text-align: center;">{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.toast').toast('show');
+
+            $('#stats-button').click(function () {
+                $('#result-table .symbol-row, #result-table .stats-row').toggle();
+                let statsIcon = $('#stats-icon');
+                if (statsIcon.hasClass('bi-dash-square-fill')) {
+                    statsIcon.removeClass('bi-dash-square-fill').addClass('bi-plus-square-fill');
+                    statsIcon.html('<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>');
+                } else {
+                    statsIcon.removeClass('bi-plus-square-fill').addClass('bi-dash-square-fill');
+                    statsIcon.html('<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm2.5 7.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1"/>');
+                }
+            });
+
+            $('#cov-button').click(function () {
+                $('#cov-table .symbol-row, #cov-table .cov-row').toggle();
+                let covIcon = $('#cov-icon');
+                if (covIcon.hasClass('bi-plus-square-fill')) {
+                    covIcon.removeClass('bi-plus-square-fill').addClass('bi-dash-square-fill');
+                    covIcon.html('<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm2.5 7.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1"/>');
+                } else {
+                    covIcon.removeClass('bi-dash-square-fill').addClass('bi-plus-square-fill');
+                    covIcon.html('<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>');
+                }
+            });
+
+            $('#markowitz-button').click(function () {
+                $('#markowitz-table .symbol-row, #markowitz-table .markowitz-row').toggle();
+                let markowitzIcon = $('#markowitz-icon');
+                if (markowitzIcon.hasClass('bi-plus-square-fill')) {
+                    markowitzIcon.removeClass('bi-plus-square-fill').addClass('bi-dash-square-fill');
+                    markowitzIcon.html('<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm2.5 7.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1"/>');
+                } else {
+                    markowitzIcon.removeClass('bi-dash-square-fill').addClass('bi-plus-square-fill');
+                    markowitzIcon.html('<path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>');
+                }
+            });
+        });
+    </script>
+</body>
+
+{% endblock %}
