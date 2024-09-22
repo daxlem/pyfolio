@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime, timedelta
 
-# Crear la conexión a la base de datos una sola vez al inicio de la aplicación
+# Crear la conexión a la base de datos
 engine = create_engine('sqlite:///db.sqlite3')
 
 def obtener_informacion_yfinance(symbol):
