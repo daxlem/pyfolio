@@ -141,17 +141,27 @@ def eliminar_fila(request):
         return render(request, 'portafolio.html', {'results': portafolio})
 
 # Función para obtener datos históricos de yfinance
-def obtener_historico(symbols):
+def obtener_historico(symbols, request):
     try:
         end_date = datetime.now()
         end_date_str = end_date.strftime('%Y-%m-%d')
         start_date = (datetime.now() - timedelta(days=5*365) - timedelta(days=30)).strftime('%Y-%m-%d')
         data = yf.download(symbols, start=start_date, end=end_date_str, interval='1mo')['Adj Close']
-        data.to_csv('prueba-portafolio.csv')
+        columnas_eliminadas = data.columns[data.isna().all()].tolist()
+        if columnas_eliminadas:
+            for symbol in columnas_eliminadas:
+                portafolio = request.session.get('portafolio', [])
+                portafolio = [entry for entry in portafolio if entry['symbol'] != symbol]
+                request.session['portafolio'] = portafolio
+                messages.error(request,"Error obteniendo datos históricos. Se ha eliminado el símbolo " + str(columnas_eliminadas)+ " del portafolio.")
+
+        data = data.dropna(axis=1, how='all')
+        data.to_csv('portafolio.csv')
         return data
+    
     except Exception as e:
         print(f"Error: {e}")
-        return None
+        return None 
     
 # Función para obtener datos históricos de US Bonos
 def obtener_historico_bonos():
@@ -161,7 +171,6 @@ def obtener_historico_bonos():
         start_date = (datetime.now() - timedelta(days=5*365) - timedelta(days=30)).strftime('%Y-%m-%d')
         data = yf.download('^TNX', start=start_date, end=end_date_str, interval='1mo')['Close']
         tasa_libre_de_riesgo = data['^TNX'].mean() / 100
-        print('aqui bon')
         return tasa_libre_de_riesgo
     except Exception as e:
         return None
@@ -290,7 +299,7 @@ def analisis(request):
             assets = []
         request.session['matriz-assets'] = assets
 
-        historico = obtener_historico(assets)
+        historico = obtener_historico(assets,request)
 
         if len(assets) > 1:
             returns = historico.pct_change(fill_method=None).dropna()
