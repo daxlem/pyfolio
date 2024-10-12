@@ -282,6 +282,7 @@ def analisis(request):
         portafolio = request.session.get('portafolio', [])
         if portafolio == [] or len(portafolio) < 2:
             portafolio == []
+            request.session['analysis_type'] = 'Equitativo'
             messages.error(request, "Es necesario agregar activos al portafolio")
             return render(request, 'portafolio.html', {'results': portafolio})
         
